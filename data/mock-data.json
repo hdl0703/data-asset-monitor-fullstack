@@ -1,0 +1,406 @@
+{
+  "servers": [
+    {
+      "id": "srv-001",
+      "name": "水务核心服务器-主",
+      "ip": "192.168.1.101",
+      "status": "online",
+      "cpu": 45,
+      "memory": 62,
+      "location": "机房A-1区",
+      "os": "CentOS 7.9"
+    },
+    {
+      "id": "srv-002",
+      "name": "水务核心服务器-备",
+      "ip": "192.168.1.102",
+      "status": "online",
+      "cpu": 38,
+      "memory": 55,
+      "location": "机房A-2区",
+      "os": "CentOS 7.9"
+    },
+    {
+      "id": "srv-003",
+      "name": "监控采集服务器",
+      "ip": "192.168.1.103",
+      "status": "warning",
+      "cpu": 78,
+      "memory": 85,
+      "location": "机房B-1区",
+      "os": "Ubuntu 22.04"
+    }
+  ],
+  "applications": [
+    {
+      "id": "app-001",
+      "name": "SCADA监控系统",
+      "serverId": "srv-001",
+      "owner": "张工",
+      "version": "3.2.1",
+      "status": "online",
+      "description": "供水管网实时监控"
+    },
+    {
+      "id": "app-002",
+      "name": "GIS地理信息系统",
+      "serverId": "srv-001",
+      "owner": "李工",
+      "version": "2.8.0",
+      "status": "online",
+      "description": "管网地理空间管理"
+    },
+    {
+      "id": "app-003",
+      "name": "水质监测系统",
+      "serverId": "srv-002",
+      "owner": "王工",
+      "version": "1.5.2",
+      "status": "warning",
+      "description": "水质在线监测预警"
+    },
+    {
+      "id": "app-004",
+      "name": "营业收费系统",
+      "serverId": "srv-002",
+      "owner": "陈工",
+      "version": "5.1.0",
+      "status": "online",
+      "description": "用户用水计费管理"
+    },
+    {
+      "id": "app-005",
+      "name": "DMA分区计量",
+      "serverId": "srv-003",
+      "owner": "刘工",
+      "version": "2.0.3",
+      "status": "error",
+      "description": "分区计量与漏损控制"
+    }
+  ],
+  "databases": [
+    {
+      "id": "db-001",
+      "name": "scada_db",
+      "appId": "app-001",
+      "type": "MySQL 8.0",
+      "status": "online",
+      "size": "256GB",
+      "connections": 45
+    },
+    {
+      "id": "db-002",
+      "name": "gis_db",
+      "appId": "app-002",
+      "type": "PostgreSQL 14",
+      "status": "online",
+      "size": "512GB",
+      "connections": 32
+    },
+    {
+      "id": "db-003",
+      "name": "water_quality_db",
+      "appId": "app-003",
+      "type": "MySQL 5.7",
+      "status": "warning",
+      "size": "128GB",
+      "connections": 28
+    },
+    {
+      "id": "db-004",
+      "name": "billing_db",
+      "appId": "app-004",
+      "type": "Oracle 19c",
+      "status": "online",
+      "size": "1TB",
+      "connections": 120
+    },
+    {
+      "id": "db-005",
+      "name": "dma_db",
+      "appId": "app-005",
+      "type": "MySQL 8.0",
+      "status": "error",
+      "size": "64GB",
+      "connections": 8
+    }
+  ],
+  "tables": [
+    {
+      "id": "tbl-001",
+      "dbId": "db-001",
+      "name": "realtime_pressure",
+      "description": "实时压力数据",
+      "rows": 15238472,
+      "updateFreq": "10秒",
+      "lastUpdate": "2026-04-17 18:40:00",
+      "status": "online",
+      "partitionType": "按天分区"
+    },
+    {
+      "id": "tbl-002",
+      "dbId": "db-001",
+      "name": "realtime_flow",
+      "description": "实时流量数据",
+      "rows": 18923456,
+      "updateFreq": "10秒",
+      "lastUpdate": "2026-04-17 18:40:00",
+      "status": "online",
+      "partitionType": "按天分区"
+    },
+    {
+      "id": "tbl-003",
+      "dbId": "db-001",
+      "name": "alarm_records",
+      "description": "报警记录表",
+      "rows": 892345,
+      "updateFreq": "5分钟",
+      "lastUpdate": "2026-04-17 18:35:00",
+      "status": "online",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-004",
+      "dbId": "db-001",
+      "name": "device_status",
+      "description": "设备状态表",
+      "rows": 23456,
+      "updateFreq": "1分钟",
+      "lastUpdate": "2026-04-17 18:40:00",
+      "status": "online",
+      "partitionType": "无分区"
+    },
+    {
+      "id": "tbl-005",
+      "dbId": "db-002",
+      "name": "pipe_network",
+      "description": "管网空间数据",
+      "rows": 456789,
+      "updateFreq": "月更新",
+      "lastUpdate": "2026-04-01 00:00:00",
+      "status": "online",
+      "partitionType": "无分区"
+    },
+    {
+      "id": "tbl-006",
+      "dbId": "db-002",
+      "name": "meter_location",
+      "description": "水表位置表",
+      "rows": 1234567,
+      "updateFreq": "周更新",
+      "lastUpdate": "2026-04-15 00:00:00",
+      "status": "online",
+      "partitionType": "无分区"
+    },
+    {
+      "id": "tbl-007",
+      "dbId": "db-003",
+      "name": "water_quality_raw",
+      "description": "水质原始数据",
+      "rows": 8923456,
+      "updateFreq": "1小时",
+      "lastUpdate": "2026-04-17 18:00:00",
+      "status": "warning",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-008",
+      "dbId": "db-003",
+      "name": "water_quality_hourly",
+      "description": "水质小时汇总",
+      "rows": 234567,
+      "updateFreq": "1小时",
+      "lastUpdate": "2026-04-17 18:00:00",
+      "status": "warning",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-009",
+      "dbId": "db-003",
+      "name": "quality_alarm",
+      "description": "水质报警表",
+      "rows": 45678,
+      "updateFreq": "30分钟",
+      "lastUpdate": "2026-04-17 17:30:00",
+      "status": "online",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-010",
+      "dbId": "db-004",
+      "name": "customer_info",
+      "description": "客户信息表",
+      "rows": 2345678,
+      "updateFreq": "实时",
+      "lastUpdate": "2026-04-17 18:40:00",
+      "status": "online",
+      "partitionType": "按区域分区"
+    },
+    {
+      "id": "tbl-011",
+      "dbId": "db-004",
+      "name": "meter_reading",
+      "description": "水表抄见表",
+      "rows": 45678901,
+      "updateFreq": "日更新",
+      "lastUpdate": "2026-04-17 06:00:00",
+      "status": "online",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-012",
+      "dbId": "db-004",
+      "name": "billing_record",
+      "description": "账单记录表",
+      "rows": 89012345,
+      "updateFreq": "日更新",
+      "lastUpdate": "2026-04-17 00:00:00",
+      "status": "online",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-013",
+      "dbId": "db-005",
+      "name": "dma_zone",
+      "description": "DMA分区表",
+      "rows": 2345,
+      "updateFreq": "月更新",
+      "lastUpdate": "2026-03-01 00:00:00",
+      "status": "error",
+      "partitionType": "无分区"
+    },
+    {
+      "id": "tbl-014",
+      "dbId": "db-005",
+      "name": "dma_flow_night",
+      "description": "夜间最小流量",
+      "rows": 123456,
+      "updateFreq": "日更新",
+      "lastUpdate": "2026-04-16 00:00:00",
+      "status": "error",
+      "partitionType": "按月分区"
+    },
+    {
+      "id": "tbl-015",
+      "dbId": "db-005",
+      "name": "leak_suspect",
+      "description": "漏损疑似表",
+      "rows": 6789,
+      "updateFreq": "周更新",
+      "lastUpdate": "2026-04-10 00:00:00",
+      "status": "error",
+      "partitionType": "无分区"
+    }
+  ],
+  "fields": [
+    {"id": "f-001", "tableId": "tbl-001", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-002", "tableId": "tbl-001", "name": "pipe_id", "type": "varchar(32)", "isKey": false, "description": "管线ID", "nullable": false},
+    {"id": "f-003", "tableId": "tbl-001", "name": "pressure_value", "type": "decimal(10,3)", "isKey": false, "description": "压力值(MPa)", "nullable": false},
+    {"id": "f-004", "tableId": "tbl-001", "name": "collect_time", "type": "datetime", "isKey": false, "description": "采集时间", "nullable": false},
+    {"id": "f-005", "tableId": "tbl-001", "name": "sensor_code", "type": "varchar(32)", "isKey": false, "description": "传感器编码", "nullable": true},
+    {"id": "f-006", "tableId": "tbl-002", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-007", "tableId": "tbl-002", "name": "pipe_id", "type": "varchar(32)", "isKey": false, "description": "管线ID", "nullable": false},
+    {"id": "f-008", "tableId": "tbl-002", "name": "flow_value", "type": "decimal(12,4)", "isKey": false, "description": "流量值(m³/h)", "nullable": false},
+    {"id": "f-009", "tableId": "tbl-002", "name": "collect_time", "type": "datetime", "isKey": false, "description": "采集时间", "nullable": false},
+    {"id": "f-010", "tableId": "tbl-003", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-011", "tableId": "tbl-003", "name": "alarm_type", "type": "varchar(32)", "isKey": false, "description": "报警类型", "nullable": false},
+    {"id": "f-012", "tableId": "tbl-003", "name": "alarm_level", "type": "tinyint", "isKey": false, "description": "报警等级(1-3)", "nullable": false},
+    {"id": "f-013", "tableId": "tbl-003", "name": "pipe_id", "type": "varchar(32)", "isKey": false, "description": "管线ID", "nullable": true},
+    {"id": "f-014", "tableId": "tbl-003", "name": "alarm_time", "type": "datetime", "isKey": false, "description": "报警时间", "nullable": false},
+    {"id": "f-015", "tableId": "tbl-003", "name": "handled", "type": "tinyint", "isKey": false, "description": "是否处理(0/1)", "nullable": false},
+    {"id": "f-016", "tableId": "tbl-004", "name": "device_id", "type": "varchar(32)", "isKey": true, "description": "设备ID", "nullable": false},
+    {"id": "f-017", "tableId": "tbl-004", "name": "device_name", "type": "varchar(128)", "isKey": false, "description": "设备名称", "nullable": false},
+    {"id": "f-018", "tableId": "tbl-004", "name": "device_type", "type": "varchar(32)", "isKey": false, "description": "设备类型", "nullable": true},
+    {"id": "f-019", "tableId": "tbl-004", "name": "online_status", "type": "tinyint", "isKey": false, "description": "在线状态", "nullable": false},
+    {"id": "f-020", "tableId": "tbl-004", "name": "last_heartbeat", "type": "datetime", "isKey": false, "description": "最后心跳时间", "nullable": false},
+    {"id": "f-021", "tableId": "tbl-007", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-022", "tableId": "tbl-007", "name": "monitor_point_id", "type": "varchar(32)", "isKey": false, "description": "监测点ID", "nullable": false},
+    {"id": "f-023", "tableId": "tbl-007", "name": "ph_value", "type": "decimal(5,3)", "isKey": false, "description": "PH值", "nullable": true},
+    {"id": "f-024", "tableId": "tbl-007", "name": "turbidity", "type": "decimal(8,3)", "isKey": false, "description": "浊度(NTU)", "nullable": true},
+    {"id": "f-025", "tableId": "tbl-007", "name": "chlorine_residual", "type": "decimal(5,3)", "isKey": false, "description": "余氯(mg/L)", "nullable": true},
+    {"id": "f-026", "tableId": "tbl-008", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-027", "tableId": "tbl-008", "name": "monitor_point_id", "type": "varchar(32)", "isKey": false, "description": "监测点ID", "nullable": false},
+    {"id": "f-028", "tableId": "tbl-008", "name": "hour_key", "type": "varchar(13)", "isKey": false, "description": "小时键值", "nullable": false},
+    {"id": "f-029", "tableId": "tbl-008", "name": "avg_ph", "type": "decimal(5,3)", "isKey": false, "description": "平均PH", "nullable": true},
+    {"id": "f-030", "tableId": "tbl-008", "name": "max_turbidity", "type": "decimal(8,3)", "isKey": false, "description": "最大浊度", "nullable": true},
+    {"id": "f-031", "tableId": "tbl-010", "name": "customer_id", "type": "varchar(32)", "isKey": true, "description": "客户ID", "nullable": false},
+    {"id": "f-032", "tableId": "tbl-010", "name": "customer_name", "type": "varchar(128)", "isKey": false, "description": "客户名称", "nullable": false},
+    {"id": "f-033", "tableId": "tbl-010", "name": "address", "type": "varchar(256)", "isKey": false, "description": "客户地址", "nullable": false},
+    {"id": "f-034", "tableId": "tbl-010", "name": "meter_id", "type": "varchar(32)", "isKey": false, "description": "水表ID", "nullable": false},
+    {"id": "f-035", "tableId": "tbl-010", "name": "dma_zone_id", "type": "varchar(32)", "isKey": false, "description": "DMA分区ID", "nullable": true},
+    {"id": "f-036", "tableId": "tbl-011", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-037", "tableId": "tbl-011", "name": "meter_id", "type": "varchar(32)", "isKey": false, "description": "水表ID", "nullable": false},
+    {"id": "f-038", "tableId": "tbl-011", "name": "reading_value", "type": "decimal(12,3)", "isKey": false, "description": "抄表读数", "nullable": false},
+    {"id": "f-039", "tableId": "tbl-011", "name": "reading_date", "type": "date", "isKey": false, "description": "抄表日期", "nullable": false},
+    {"id": "f-040", "tableId": "tbl-012", "name": "id", "type": "bigint", "isKey": true, "description": "主键ID", "nullable": false},
+    {"id": "f-041", "tableId": "tbl-012", "name": "customer_id", "type": "varchar(32)", "isKey": false, "description": "客户ID", "nullable": false},
+    {"id": "f-042", "tableId": "tbl-012", "name": "billing_period", "type": "varchar(7)", "isKey": false, "description": "账单周期", "nullable": false},
+    {"id": "f-043", "tableId": "tbl-012", "name": "water_usage", "type": "decimal(12,3)", "isKey": false, "description": "用水量(m³)", "nullable": false},
+    {"id": "f-044", "tableId": "tbl-012", "name": "billing_amount", "type": "decimal(12,2)", "isKey": false, "description": "账单金额", "nullable": false}
+  ],
+  "tableLineage": [
+    {
+      "id": "ln-001",
+      "fromTableId": "tbl-001",
+      "toTableId": "tbl-003",
+      "relationship": "触发报警",
+      "fromFields": ["alarm_level", "pipe_id"],
+      "toFields": ["alarm_level", "pipe_id"],
+      "sqlExample": "INSERT INTO alarm_records SELECT * FROM realtime_pressure WHERE pressure_value > threshold"
+    },
+    {
+      "id": "ln-002",
+      "fromTableId": "tbl-007",
+      "toTableId": "tbl-008",
+      "relationship": "小时汇总",
+      "fromFields": ["monitor_point_id", "ph_value", "turbidity", "chlorine_residual"],
+      "toFields": ["monitor_point_id", "hour_key", "avg_ph", "max_turbidity"],
+      "sqlExample": "INSERT INTO water_quality_hourly SELECT monitor_point_id, DATE_FORMAT(collect_time,'%Y-%m-%d %H') as hour_key, AVG(ph_value), MAX(turbidity) FROM water_quality_raw GROUP BY 1,2"
+    },
+    {
+      "id": "ln-003",
+      "fromTableId": "tbl-011",
+      "toTableId": "tbl-012",
+      "relationship": "生成账单",
+      "fromFields": ["meter_id", "reading_value"],
+      "toFields": ["customer_id", "water_usage"],
+      "sqlExample": "INSERT INTO billing_record SELECT c.customer_id, b.billing_period, (b.reading_value - a.reading_value) as water_usage FROM billing_record a, meter_reading b, customer_info c WHERE a.meter_id = b.meter_id"
+    },
+    {
+      "id": "ln-004",
+      "fromTableId": "tbl-010",
+      "toTableId": "tbl-011",
+      "relationship": "客户关联",
+      "fromFields": ["customer_id", "meter_id", "dma_zone_id"],
+      "toFields": ["customer_id", "meter_id"],
+      "sqlExample": "SELECT m.* FROM meter_reading m JOIN customer_info c ON m.meter_id = c.meter_id"
+    },
+    {
+      "id": "ln-005",
+      "fromTableId": "tbl-013",
+      "toTableId": "tbl-014",
+      "relationship": "分区计量汇总",
+      "fromFields": ["zone_id", "zone_name"],
+      "toFields": ["zone_id", "zone_name"],
+      "sqlExample": "INSERT INTO dma_flow_night SELECT zone_id, zone_name FROM dma_zone"
+    },
+    {
+      "id": "ln-006",
+      "fromTableId": "tbl-014",
+      "toTableId": "tbl-015",
+      "relationship": "漏损分析",
+      "fromFields": ["zone_id", "night_flow"],
+      "toFields": ["zone_id", "suspect_level"],
+      "sqlExample": "INSERT INTO leak_suspect SELECT zone_id, CASE WHEN night_flow > threshold THEN 'HIGH' ELSE 'NORMAL' END FROM dma_flow_night"
+    },
+    {
+      "id": "ln-007",
+      "fromTableId": "tbl-001",
+      "toTableId": "tbl-004",
+      "relationship": "设备关联",
+      "fromFields": ["sensor_code"],
+      "toFields": ["device_id"],
+      "sqlExample": "UPDATE device_status d SET d.online_status = 1 FROM realtime_pressure p WHERE p.sensor_code = d.device_id"
+    }
+  ]
+}
