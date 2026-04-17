@@ -1,0 +1,21 @@
+{
+  "name": "data-asset-monitor-fullstack",
+  "version": "1.0.0",
+  "description": "全链路数据资产监控平台 - 5层穿透式监控 + 字段级血缘关系可视化",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "pinia": "^2.1.7",
+    "element-plus": "^2.5.6",
+    "@antv/g6": "^4.8.24",
+    "dayjs": "^1.11.10"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4",
+    "@vitejs/plugin-vue": "^5.0.4"
+  }
+}
