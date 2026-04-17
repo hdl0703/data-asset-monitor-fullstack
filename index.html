@@ -4,544 +4,374 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>全链路数据资产监控平台</title>
-  <!-- Vue 3 -->
-  <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
-  <!-- Element Plus -->
   <link rel="stylesheet" href="https://unpkg.com/element-plus@2.5.6/dist/index.css">
-  <script src="https://unpkg.com/element-plus@2.5.6/dist/index.full.js"></script>
-  <!-- G6 图可视化 -->
+  <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/element-plus@2.5.6/dist/index.full.min.js"></script>
   <script src="https://unpkg.com/@antv/g6@4.8.24/dist/g6.min.js"></script>
-  <!-- Pinia 状态管理 -->
-  <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.prod.js"></script>
-  <!-- Day.js 日期 -->
-  <script src="https://unpkg.com/dayjs@1.11.10/dayjs.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; }
-    .app-container { display: flex; flex-direction: column; height: 100vh; }
-    /* 顶部栏 */
-    .header { background: #fff; padding: 16px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); z-index: 100; }
-    .header-title { font-size: 20px; font-weight: 600; color: #303133; margin-bottom: 12px; }
-    .header-title span { color: #409eff; }
-    .header-search { display: flex; gap: 12px; }
-    /* 主体 */
-    .main-content { display: flex; flex: 1; overflow: hidden; }
-    /* 左侧导航 */
-    .left-nav { width: 280px; background: #fff; border-right: 1px solid #e4e7ed; overflow-y: auto; padding: 16px; }
-    .nav-item { margin-bottom: 8px; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
-    .nav-item:hover { background: #f5f7fa; }
-    .nav-item.active { background: #ecf5ff; color: #409eff; }
-    .nav-level-1 { padding: 10px 12px; font-weight: 500; }
-    .nav-level-2 { padding: 8px 12px 8px 24px; font-size: 13px; color: #606266; }
-    .nav-level-3 { padding: 6px 12px 6px 40px; font-size: 12px; color: #909399; }
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-    .status-dot.online { background: #67c23a; }
-    .status-dot.warning { background: #e6a23c; }
-    .status-dot.error { background: #f56c6c; }
-    /* 右侧面板 */
-    .right-panel { flex: 1; overflow-y: auto; padding: 20px; }
-    /* 卡片 */
-    .panel-card { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
-    .panel-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
-    .stat-item { padding: 12px; background: #f9fafb; border-radius: 6px; text-align: center; }
-    .stat-value { font-size: 24px; font-weight: 600; color: #409eff; }
-    .stat-label { font-size: 12px; color: #909399; margin-top: 4px; }
-    /* 仪表 */
-    .gauge-container { display: flex; gap: 24px; justify-content: center; padding: 16px; }
-    .gauge-item { text-align: center; }
-    .gauge-label { font-size: 12px; color: #606266; margin-top: 8px; }
-    /* 表格 */
-    .field-table { width: 100%; }
-    /* 图谱 */
-    .graph-container { width: 100%; height: 500px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; }
-    /* 信息表格 */
-    .info-table { width: 100%; }
-    .info-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
-    .info-table td:first-child { width: 120px; color: #909399; font-size: 13px; }
-    .info-table td:last-child { color: #303133; }
-    /* 空状态 */
-    .empty-state { text-align: center; padding: 60px 20px; color: #909399; }
-    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif;background:#f5f7fa}
+    .app{flex-direction:column;height:100vh;display:flex}
+    .header{background:#fff;padding:16px 24px;box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:100}
+    .title{font-size:20px;font-weight:600;color:#303133;margin-bottom:12px}
+    .search-bar{display:flex;gap:12px}
+    .main{display:flex;flex:1;overflow:hidden}
+    .left-nav{width:280px;background:#fff;border-right:1px solid #e4e7ed;overflow-y:auto;padding:16px}
+    .nav-item{margin-bottom:8px;cursor:pointer;border-radius:6px;transition:all .2s;padding:10px 12px}
+    .nav-item:hover{background:#f5f7fa}
+    .nav-item.active{background:#ecf5ff;color:#409eff}
+    .nav-label{font-weight:500}
+    .nav-sub{font-size:13px;color:#909399;padding:4px 12px}
+    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+    .dot-online{background:#67c23a}
+    .dot-warning{background:#e6a23c}
+    .dot-error{background:#f56c6c}
+    .right-panel{flex:1;overflow-y:auto;padding:20px}
+    .card{background:#fff;border-radius:8px;padding:20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+    .card-title{font-size:16px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #f0f0f0}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+    .stat-item{padding:12px;background:#f9fafb;border-radius:6px;text-align:center}
+    .stat-value{font-size:24px;font-weight:600;color:#409eff}
+    .stat-label{font-size:12px;color:#909399;margin-top:4px}
+    .gauge-wrap{display:flex;gap:24px;justify-content:center;padding:16px}
+    .gauge-item{text-align:center}
+    .gauge-label{font-size:12px;color:#606266;margin-top:8px}
+    .graph-box{width:100%;height:500px;background:#fafafa;border-radius:8px;border:1px solid #eee}
+    .info-table{width:100%}
+    .info-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0}
+    .info-table td:first-child{width:120px;color:#909399;font-size:13px}
+    .info-table td:last-child{color:#303133}
+    .empty{text-align:center;padding:60px 20px;color:#909399}
+    .empty-icon{font-size:48px;margin-bottom:16px}
   </style>
 </head>
 <body>
-<div id="app" class="app-container">
-  <!-- 顶部 -->
+<div id="app" class="app">
   <header class="header">
-    <div class="header-title">🌊 全链路数据资产监控平台</div>
-    <div class="header-search">
-      <el-input v-model="searchKeyword" placeholder="搜索表名/字段名..." prefix-icon="Search" clearable @change="handleSearch"></el-input>
-      <el-select v-model="levelFilter" placeholder="筛选层级" clearable style="width: 140px;">
-        <el-option label="服务器" value="server"></el-option>
-        <el-option label="应用" value="app"></el-option>
-        <el-option label="数据库" value="db"></el-option>
-        <el-option label="表" value="table"></el-option>
-      </el-select>
+    <div class="title">🌊 全链路数据资产监控平台</div>
+    <div class="search-bar">
+      <el-input v-model="search" placeholder="搜索表名/字段名..." clearable @change="doSearch"></el-input>
     </div>
   </header>
-  
-  <!-- 主体 -->
-  <div class="main-content">
-    <!-- 左侧导航 -->
+  <div class="main">
     <aside class="left-nav">
-      <!-- 服务器层 -->
-      <div v-for="server in filteredServers" :key="server.id" class="nav-item" :class="{active: selectedType==='server' && selectedId===server.id}" @click="selectServer(server)">
-        <div class="nav-level-1"><span class="status-dot" :class="server.status"></span>{{server.name}}</div>
-        <div class="nav-level-2">{{server.ip}}</div>
-      </div>
-      
-      <!-- 应用层 -->
-      <template v-if="selectedType==='server' || selectedType==='app'">
-        <div v-for="app in currentApps" :key="app.id" class="nav-item" :class="{active: selectedType==='app' && selectedId===app.id}" @click="selectApp(app)">
-          <div class="nav-level-1"><span class="status-dot" :class="app.status"></span>{{app.name}}</div>
-          <div class="nav-level-2">{{app.owner}} | v{{app.version}}</div>
+      <template v-for="srv in servers" :key="srv.id">
+        <div class="nav-item" :class="{active:selType==='srv'&&selId===srv.id}" @click="selectSrv(srv)">
+          <div class="nav-label"><span class="status-dot" :class="'dot-'+srv.status"></span>{{srv.name}}</div>
+          <div class="nav-sub">{{srv.ip}}</div>
         </div>
-      </template>
-      
-      <!-- 数据库层 -->
-      <template v-if="selectedType==='app' || selectedType==='db'">
-        <div v-for="db in currentDbs" :key="db.id" class="nav-item" :class="{active: selectedType==='db' && selectedId===db.id}" @click="selectDb(db)">
-          <div class="nav-level-1"><span class="status-dot" :class="db.status"></span>{{db.name}}</div>
-          <div class="nav-level-2">{{db.type}} | {{db.size}}</div>
-        </div>
-      </template>
-      
-      <!-- 表层 -->
-      <template v-if="selectedType==='db' || selectedType==='table'">
-        <div v-for="table in currentTables" :key="table.id" class="nav-item" :class="{active: selectedType==='table' && selectedId===table.id}" @click="selectTable(table)">
-          <div class="nav-level-1"><span class="status-dot" :class="table.status"></span>{{table.name}}</div>
-          <div class="nav-level-2">{{table.rows.toLocaleString()}}行 | {{table.updateFreq}}</div>
-        </div>
-      </template>
-      
-      <!-- 字段层 -->
-      <template v-if="selectedType==='table' || selectedType==='field'">
-        <div v-for="field in currentFields" :key="field.id" class="nav-item" :class="{active: selectedType==='field' && selectedId===field.id}" @click="selectField(field)">
-          <div class="nav-level-1">
-            <el-tag v-if="field.isKey" size="small" type="warning" style="margin-right:4px;">PK</el-tag>
-            {{field.name}}
+        <template v-if="selType==='srv'&&selId===srv.id" v-for="app in getApps(srv.id)" :key="app.id">
+          <div class="nav-item" :class="{active:selType==='app'&&selId===app.id}" @click="selectApp(app)" style="padding-left:24px">
+            <div class="nav-label"><span class="status-dot" :class="'dot-'+app.status"></span>{{app.name}}</div>
+            <div class="nav-sub">{{app.owner}} | v{{app.version}}</div>
           </div>
-          <div class="nav-level-2">{{field.type}} | {{field.description}}</div>
-        </div>
+          <template v-if="selType==='app'&&selId===app.id" v-for="db in getDbs(app.id)" :key="db.id">
+            <div class="nav-item" :class="{active:selType==='db'&&selId===db.id}" @click="selectDb(db)" style="padding-left:40px">
+              <div class="nav-label"><span class="status-dot" :class="'dot-'+db.status"></span>{{db.name}}</div>
+              <div class="nav-sub">{{db.type}} | {{db.size}}</div>
+            </div>
+            <template v-if="selType==='db'&&selId===db.id" v-for="tbl in getTables(db.id)" :key="tbl.id">
+              <div class="nav-item" :class="{active:selType==='tbl'&&selId===tbl.id}" @click="selectTbl(tbl)" style="padding-left:56px">
+                <div class="nav-label"><span class="status-dot" :class="'dot-'+tbl.status"></span>{{tbl.name}}</div>
+                <div class="nav-sub">{{fmtNum(tbl.rows)}}行 | {{tbl.updateFreq}}</div>
+              </div>
+              <template v-if="selType==='tbl'&&selId===tbl.id" v-for="fld in getFields(tbl.id)" :key="fld.id">
+                <div class="nav-item" :class="{active:selType==='fld'&&selId===fld.id}" @click="selectFld(fld)" style="padding-left:72px">
+                  <div class="nav-label">{{fld.name}}</div>
+                  <div class="nav-sub">{{fld.type}} | {{fld.description}}</div>
+                </div>
+              </template>
+            </template>
+          </template>
+        </template>
       </template>
     </aside>
-    
-    <!-- 右侧面板 -->
     <main class="right-panel">
       <!-- 服务器详情 -->
-      <template v-if="selectedType==='server' && selectedServer">
-        <div class="panel-card">
-          <div class="panel-title">📊 {{selectedServer.name}} - 服务器状态</div>
-          <div class="gauge-container">
+      <template v-if="selType==='srv'&&curSrv">
+        <div class="card">
+          <div class="card-title">📊 {{curSrv.name}} - 服务器状态</div>
+          <div class="gauge-wrap">
             <div class="gauge-item">
-              <el-progress type="dashboard" :percentage="selectedServer.cpu" :color="getGaugeColor(selectedServer.cpu)" :width="120">
-                <template #default><span class="stat-value">{{selectedServer.cpu}}%</span></template>
+              <el-progress type="dashboard" :percentage="curSrv.cpu" :color="gaugeColor(curSrv.cpu)" :width="100">
+                <template #default><span class="stat-value">{{curSrv.cpu}}%</span></template>
               </el-progress>
               <div class="gauge-label">CPU 使用率</div>
             </div>
             <div class="gauge-item">
-              <el-progress type="dashboard" :percentage="selectedServer.memory" :color="getGaugeColor(selectedServer.memory)" :width="120">
-                <template #default><span class="stat-value">{{selectedServer.memory}}%</span></template>
+              <el-progress type="dashboard" :percentage="curSrv.memory" :color="gaugeColor(curSrv.memory)" :width="100">
+                <template #default><span class="stat-value">{{curSrv.memory}}%</span></template>
               </el-progress>
               <div class="gauge-label">内存使用率</div>
             </div>
           </div>
-          <el-descriptions :column="2" border style="margin-top:20px;">
-            <el-descriptions-item label="IP地址">{{selectedServer.ip}}</el-descriptions-item>
-            <el-descriptions-item label="操作系统">{{selectedServer.os}}</el-descriptions-item>
-            <el-descriptions-item label="机房位置">{{selectedServer.location}}</el-descriptions-item>
-            <el-descriptions-item label="状态"><el-tag :type="getStatusType(selectedServer.status)">{{selectedServer.status}}</el-tag></el-descriptions-item>
+          <el-descriptions :column="2" border style="margin-top:20px">
+            <el-descriptions-item label="IP地址">{{curSrv.ip}}</el-descriptions-item>
+            <el-descriptions-item label="操作系统">{{curSrv.os}}</el-descriptions-item>
+            <el-descriptions-item label="机房位置">{{curSrv.location}}</el-descriptions-item>
+            <el-descriptions-item label="状态"><el-tag :type="statusType(curSrv.status)">{{curSrv.status}}</el-tag></el-descriptions-item>
           </el-descriptions>
         </div>
-        
-        <div class="panel-card">
-          <div class="panel-title">📦 关联应用 ({{currentApps.length}})</div>
-          <el-table :data="currentApps" stripe>
+        <div class="card">
+          <div class="card-title">📦 关联应用 ({{getApps(curSrv.id).length}})</div>
+          <el-table :data="getApps(curSrv.id)" stripe size="small">
             <el-table-column prop="name" label="应用名称"></el-table-column>
             <el-table-column prop="owner" label="负责人"></el-table-column>
-            <el-table-column prop="version" label="版本"></el-table-column>
-            <el-table-column prop="description" label="描述"></el-table-column>
+            <el-table-column prop="version" label="版本" width="80"></el-table-column>
             <el-table-column label="状态">
-              <template #default="{row}"><el-tag :type="getStatusType(row.status)">{{row.status}}</el-tag></template>
+              <template #default="{row}"><el-tag size="small" :type="statusType(row.status)">{{row.status}}</el-tag></template>
             </el-table-column>
           </el-table>
         </div>
       </template>
-      
       <!-- 应用详情 -->
-      <template v-if="selectedType==='app' && selectedApp">
-        <div class="panel-card">
-          <div class="panel-title">应用详情 - {{selectedApp.name}}</div>
+      <template v-if="selType==='app'&&curApp">
+        <div class="card">
+          <div class="card-title">应用详情 - {{curApp.name}}</div>
           <el-descriptions :column="2" border>
-            <el-descriptions-item label="应用名称">{{selectedApp.name}}</el-descriptions-item>
-            <el-descriptions-item label="版本">{{selectedApp.version}}</el-descriptions-item>
-            <el-descriptions-item label="负责人">{{selectedApp.owner}}</el-descriptions-item>
-            <el-descriptions-item label="状态"><el-tag :type="getStatusType(selectedApp.status)">{{selectedApp.status}}</el-tag></el-descriptions-item>
-            <el-descriptions-item label="描述" :span="2">{{selectedApp.description}}</el-descriptions-item>
+            <el-descriptions-item label="负责人">{{curApp.owner}}</el-descriptions-item>
+            <el-descriptions-item label="版本">{{curApp.version}}</el-descriptions-item>
+            <el-descriptions-item label="状态"><el-tag :type="statusType(curApp.status)">{{curApp.status}}</el-tag></el-descriptions-item>
+            <el-descriptions-item label="描述" :span="2">{{curApp.description}}</el-descriptions-item>
           </el-descriptions>
         </div>
       </template>
-      
       <!-- 数据库详情 -->
-      <template v-if="selectedType==='db' && selectedDb">
-        <div class="panel-card">
-          <div class="panel-title">📊 {{selectedDb.name}} - 数据库健康度</div>
+      <template v-if="selType==='db'&&curDb">
+        <div class="card">
+          <div class="card-title">📊 {{curDb.name}} - 数据库</div>
           <div class="stat-grid">
-            <div class="stat-item"><div class="stat-value">{{selectedDb.connections}}</div><div class="stat-label">当前连接数</div></div>
-            <div class="stat-item"><div class="stat-value">{{selectedDb.size}}</div><div class="stat-label">数据库大小</div></div>
-            <div class="stat-item"><div class="stat-value">{{currentTables.length}}</div><div class="stat-label">表数量</div></div>
-            <div class="stat-item"><div class="stat-value">{{errorTablesCount}}</div><div class="stat-label">异常表数</div></div>
+            <div class="stat-item"><div class="stat-value">{{curDb.connections}}</div><div class="stat-label">连接数</div></div>
+            <div class="stat-item"><div class="stat-value">{{curDb.size}}</div><div class="stat-label">大小</div></div>
+            <div class="stat-item"><div class="stat-value">{{getTables(curDb.id).length}}</div><div class="stat-label">表数量</div></div>
+            <div class="stat-item"><div class="stat-value">{{errTables}}</div><div class="stat-label">异常表</div></div>
           </div>
         </div>
-        
-        <div class="panel-card">
-          <div class="panel-title">📋 表列表 ({{currentTables.length}})</div>
-          <el-table :data="currentTables" stripe>
+        <div class="card">
+          <div class="card-title">📋 表列表 ({{getTables(curDb.id).length}})</div>
+          <el-table :data="getTables(curDb.id)" stripe size="small">
             <el-table-column prop="name" label="表名"></el-table-column>
             <el-table-column prop="description" label="描述"></el-table-column>
-            <el-table-column prop="rows" label="行数" :formatter="r=>r.rows.toLocaleString()"></el-table-column>
-            <el-table-column prop="updateFreq" label="更新频率"></el-table-column>
-            <el-table-column prop="lastUpdate" label="最后更新"></el-table-column>
-            <el-table-column label="状态">
-              <template #default="{row}"><el-tag :type="getStatusType(row.status)">{{row.status}}</el-tag></template>
+            <el-table-column prop="rows" label="行数" :formatter="r=>fmtNum(r.rows)"></el-table-column>
+            <el-table-column prop="updateFreq" label="更新频率" width="100"></el-table-column>
+            <el-table-column label="状态" width="80">
+              <template #default="{row}"><el-tag size="small" :type="statusType(row.status)">{{row.status}}</el-tag></template>
             </el-table-column>
           </el-table>
         </div>
       </template>
-      
-      <!-- 表详情 + 血缘图 -->
-      <template v-if="selectedType==='table' && selectedTable">
-        <div class="panel-card">
-          <div class="panel-title">📊 {{selectedTable.name}} - 表详情</div>
+      <!-- 表详情+血缘图 -->
+      <template v-if="selType==='tbl'&&curTbl">
+        <div class="card">
+          <div class="card-title">📊 {{curTbl.name}} - 表详情</div>
           <el-descriptions :column="2" border>
-            <el-descriptions-item label="表名">{{selectedTable.name}}</el-descriptions-item>
-            <el-descriptions-item label="描述">{{selectedTable.description}}</el-descriptions-item>
-            <el-descriptions-item label="行数">{{selectedTable.rows.toLocaleString()}}</el-descriptions-item>
-            <el-descriptions-item label="更新频率">{{selectedTable.updateFreq}}</el-descriptions-item>
-            <el-descriptions-item label="最后更新">{{selectedTable.lastUpdate}}</el-table-column>
-            <el-descriptions-item label="状态"><el-tag :type="getStatusType(selectedTable.status)">{{selectedTable.status}}</el-tag></el-descriptions-item>
+            <el-descriptions-item label="表名">{{curTbl.name}}</el-descriptions-item>
+            <el-descriptions-item label="描述">{{curTbl.description}}</el-descriptions-item>
+            <el-descriptions-item label="行数">{{fmtNum(curTbl.rows)}}</el-descriptions-item>
+            <el-descriptions-item label="更新频率">{{curTbl.updateFreq}}</el-descriptions-item>
+            <el-descriptions-item label="最后更新">{{curTbl.lastUpdate}}</el-descriptions-item>
+            <el-descriptions-item label="状态"><el-tag :type="statusType(curTbl.status)">{{curTbl.status}}</el-tag></el-descriptions-item>
           </el-descriptions>
         </div>
-        
-        <div class="panel-card">
-          <div class="panel-title">🔗 字段列表 ({{currentFields.length}})</div>
-          <el-table :data="currentFields" stripe>
-            <el-table-column prop="name" label="字段名"></el-table-column>
-            <el-table-column prop="type" label="类型"></el-table-column>
+        <div class="card">
+          <div class="card-title">🔗 字段列表 ({{getFields(curTbl.id).length}})</div>
+          <el-table :data="getFields(curTbl.id)" stripe size="small">
+            <el-table-column prop="name" label="字段名" width="150"></el-table-column>
+            <el-table-column prop="type" label="类型" width="120"></el-table-column>
             <el-table-column prop="description" label="描述"></el-table-column>
-            <el-table-column label="主键"><el-tag v-if="field.isKey" type="warning">PK</el-tag></el-table-column>
-            <el-table-column label="可空"><el-tag v-if="field.nullable" type="info">NULL</el-tag></el-table-column>
+            <el-table-column label="主键" width="60">
+              <template #default="{row}"><el-tag v-if="row.isKey" size="small" type="warning">PK</el-tag></template>
+            </el-table-column>
           </el-table>
         </div>
-        
-        <div class="panel-card">
-          <div class="panel-title">🔗 血缘关系图</div>
-          <el-radio-group v-model="lineageView" size="small" style="margin-bottom:12px;">
-            <el-radio-button label="in">入向血缘 (被哪些表引用)</el-radio-button>
-            <el-radio-button label="out">出向血缘 (引用了哪些表)</el-radio-button>
+        <div class="card">
+          <div class="card-title">🔗 血缘关系图</div>
+          <el-radio-group v-model="lineView" size="small" style="margin-bottom:12px">
+            <el-radio-button value="in">入向血缘</el-radio-button>
+            <el-radio-button value="out">出向血缘</el-radio-button>
           </el-radio-group>
-          <div id="lineage-graph" class="graph-container"></div>
+          <div id="g6graph" class="graph-box"></div>
         </div>
       </template>
-      
       <!-- 字段详情 -->
-      <template v-if="selectedType==='field' && selectedField">
-        <div class="panel-card">
-          <div class="panel-title">📍 字段详情 - {{selectedField.name}}</div>
+      <template v-if="selType==='fld'&&curFld">
+        <div class="card">
+          <div class="card-title">📍 {{curFld.name}} - 字段详情</div>
           <el-descriptions :column="2" border>
-            <el-descriptions-item label="字段名">{{selectedField.name}}</el-descriptions-item>
-            <el-descriptions-item label="数据类型">{{selectedField.type}}</el-table-column>
-            <el-descriptions-item label="描述">{{selectedField.description}}</el-descriptions-item>
-            <el-descriptions-item label="主键"><el-tag :type="selectedField.isKey?'warning':'info'">{{selectedField.isKey?'是':'否'}}</el-tag></el-descriptions-item>
+            <el-descriptions-item label="字段名">{{curFld.name}}</el-descriptions-item>
+            <el-descriptions-item label="类型">{{curFld.type}}</el-descriptions-item>
+            <el-descriptions-item label="描述">{{curFld.description}}</el-descriptions-item>
+            <el-descriptions-item label="主键"><el-tag :type="curFld.isKey?'warning':'info'">{{curFld.isKey?'是':'否'}}</el-tag></el-descriptions-item>
           </el-descriptions>
         </div>
-        
-        <div class="panel-card">
-          <div class="panel-title">⚠️ 字段级影响分析</div>
-          <el-alert v-if="fieldUpstream.length===0 && fieldDownstream.length===0" type="info" :closable="false" show-icon>
-            该字段暂无上下游血缘关系
-          </el-alert>
+        <div class="card">
+          <div class="card-title">⚠️ 字段影响分析</div>
+          <el-alert v-if="upStreams.length===0&&downStreams.length===0" type="info" :closable="false" show-icon>暂无上下游血缘关系</el-alert>
           <div v-else>
-            <div v-if="fieldUpstream.length>0" style="margin-bottom:16px;">
-              <h4 style="color:#909399;margin-bottom:8px;">⬆️ 上游影响 (修改此字段会影响):</h4>
-              <el-tag v-for="t in fieldUpstream" :key="t" style="margin-right:8px;margin-bottom:8px;">{{t}}</el-tag>
+            <div v-if="upStreams.length>0" style="margin-bottom:12px">
+              <div style="color:#909399;margin-bottom:8px">⬆️ 上游影响 (修改此字段会影响):</div>
+              <el-tag v-for="t in upStreams" :key="t" style="margin-right:8px">{{t}}</el-tag>
             </div>
-            <div v-if="fieldDownstream.length>0">
-              <h4 style="color:#909399;margin-bottom:8px;">⬇️ 下游被依赖 (此字段被依赖):</h4>
-              <el-tag v-for="t in fieldDownstream" :key="t" type="warning" style="margin-right:8px;margin-bottom:8px;">{{t}}</el-tag>
+            <div v-if="downStreams.length>0">
+              <div style="color:#909399;margin-bottom:8px">⬇️ 下游被依赖:</div>
+              <el-tag v-for="t in downStreams" :key="t" type="warning" style="margin-right:8px">{{t}}</el-tag>
             </div>
           </div>
         </div>
       </template>
-      
       <!-- 空状态 -->
-      <template v-if="!selectedType">
-        <div class="empty-state">
+      <template v-if="!selType">
+        <div class="empty">
           <div class="empty-icon">🔍</div>
           <p>从左侧选择一个节点开始探索</p>
-          <p style="font-size:13px;margin-top:8px;">支持：服务器 → 应用 → 数据库 → 表 → 字段 的5层穿透</p>
+          <p style="font-size:13px;margin-top:8px">支持：服务器 → 应用 → 数据库 → 表 → 字段 的5层穿透</p>
         </div>
       </template>
     </main>
   </div>
 </div>
-
 <script>
-const { createApp, ref, computed, watch, nextTick } = Vue;
-const { createPinia, PiniaVuePlugin } = Pinia;
-
-// Pinia Store
-const useStore = Pinia.createPinia().use;
-const store = createPinia();
-
-// 加载数据
-let mockData = null;
-let graph = null;
-
-async function loadData() {
-  const res = await fetch('./data/mock-data.json');
-  mockData = await res.json();
-  return mockData;
-}
-
-// 主应用
-const app = createApp({
-  setup() {
-    // 状态
-    const searchKeyword = ref('');
-    const levelFilter = ref('');
-    const selectedType = ref('');
-    const selectedId = ref('');
-    const selectedServer = ref(null);
-    const selectedApp = ref(null);
-    const selectedDb = ref(null);
-    const selectedTable = ref(null);
-    const selectedField = ref(null);
-    const lineageView = ref('in');
+const{createApp,ref,computed,watch,nextTick}=Vue;
+const app=createApp({
+  setup(){
+    const search=ref('');
+    const selType=ref('');
+    const selId=ref('');
+    const selSrv=ref(null);
+    const selApp=ref(null);
+    const selDb=ref(null);
+    const selTbl=ref(null);
+    const selFld=ref(null);
+    const lineView=ref('in');
+    const data=ref(null);
+    const graphRef=ref(null);
     
-    // 计算属性
-    const filteredServers = computed(() => {
-      if (!mockData) return [];
-      if (!searchKeyword.value) return mockData.servers;
-      return mockData.servers.filter(s => 
-        s.name.includes(searchKeyword.value) || s.ip.includes(searchKeyword.value)
-      );
+    const servers=computed(()=>data.value?.servers||[]);
+    const curSrv=computed(()=>selSrv.value);
+    const curApp=computed(()=>selApp.value);
+    const curDb=computed(()=>selDb.value);
+    const curTbl=computed(()=>selTbl.value);
+    const curFld=computed(()=>selFld.value);
+    const errTables=computed(()=>getTables(selDb.value?.id).filter(t=>t.status==='error').length);
+    
+    const upStreams=computed(()=>{
+      if(!data.value||!curFld.value)return[];
+      return data.value.tableLineage.filter(l=>l.toFields.includes(curFld.value.name)).map(l=>{
+        const t=data.value.tables.find(t=>t.id===l.fromTableId);
+        return t?t.name:l.fromTableId;
+      });
     });
-    
-    const currentApps = computed(() => {
-      if (!mockData || !selectedServer.value) return [];
-      return mockData.applications.filter(a => a.serverId === selectedServer.value.id);
-    });
-    
-    const currentDbs = computed(() => {
-      if (!mockData) return [];
-      if (selectedApp.value) return mockData.databases.filter(d => d.appId === selectedApp.value.id);
-      if (selectedServer.value) {
-        const appIds = mockData.applications.filter(a => a.serverId === selectedServer.value.id).map(a => a.id);
-        return mockData.databases.filter(d => appIds.includes(d.appId));
-      }
-      return [];
-    });
-    
-    const currentTables = computed(() => {
-      if (!mockData || !selectedDb.value) return [];
-      return mockData.tables.filter(t => t.dbId === selectedDb.value.id);
-    });
-    
-    const currentFields = computed(() => {
-      if (!mockData || !selectedTable.value) return [];
-      return mockData.fields.filter(f => f.tableId === selectedTable.value.id);
-    });
-    
-    const errorTablesCount = computed(() => {
-      return currentTables.value.filter(t => t.status === 'error').length;
-    });
-    
-    // 字段血缘
-    const fieldUpstream = computed(() => {
-      if (!mockData || !selectedField.value) return [];
-      const lineages = mockData.tableLineage.filter(l => l.toFields.includes(selectedField.value.name));
-      return lineages.map(l => {
-        const t = mockData.tables.find(t => t.id === l.fromTableId);
-        return t ? t.name : l.fromTableId;
+    const downStreams=computed(()=>{
+      if(!data.value||!curFld.value)return[];
+      return data.value.tableLineage.filter(l=>l.fromFields.includes(curFld.value.name)).map(l=>{
+        const t=data.value.tables.find(t=>t.id===l.toTableId);
+        return t?t.name:l.toTableId;
       });
     });
     
-    const fieldDownstream = computed(() => {
-      if (!mockData || !selectedField.value) return [];
-      const lineages = mockData.tableLineage.filter(l => l.fromFields.includes(selectedField.value.name));
-      return lineages.map(l => {
-        const t = mockData.tables.find(t => t.id === l.toTableId);
-        return t ? t.name : l.toTableId;
-      });
-    });
+    function getApps(srvId){return data.value?.applications?.filter(a=>a.serverId===srvId)||[]}
+    function getDbs(appId){return data.value?.databases?.filter(d=>d.appId===appId)||[]}
+    function getTables(dbId){return data.value?.tables?.filter(t=>t.dbId===dbId)||[]}
+    function getFields(tblId){return data.value?.fields?.filter(f=>f.tableId===tblId)||[]}
+    function fmtNum(n){return n?.toLocaleString()||0}
+    function statusType(s){
+      return{online:'success',warning:'warning',error:'danger'}[s]||'info';
+    }
+    function gaugeColor(v){
+      if(v<60)return'#67c23a';
+      if(v<80)return'#e6a23c';
+      return'#f56c6c';
+    }
+    function doSearch(){console.log('search:',search.value)}
     
-    // 方法
-    const selectServer = (server) => {
-      selectedType.value = 'server';
-      selectedId.value = server.id;
-      selectedServer.value = server;
-      selectedApp.value = null;
-      selectedDb.value = null;
-      selectedTable.value = null;
-      selectedField.value = null;
-    };
+    function selectSrv(srv){
+      selType.value='srv';selId.value=srv.id;selSrv.value=srv;
+      selApp.value=null;selDb.value=null;selTbl.value=null;selFld.value=null;
+    }
+    function selectApp(app){
+      selType.value='app';selId.value=app.id;selApp.value=app;
+      selDb.value=null;selTbl.value=null;selFld.value=null;
+    }
+    function selectDb(db){
+      selType.value='db';selId.value=db.id;selDb.value=db;
+      selTbl.value=null;selFld.value=null;
+    }
+    function selectTbl(tbl){
+      selType.value='tbl';selId.value=tbl.id;selTbl.value=tbl;selFld.value=null;
+      nextTick(()=>renderGraph());
+    }
+    function selectFld(fld){
+      selType.value='fld';selId.value=fld.id;selFld.value=fld;
+    }
     
-    const selectApp = (app) => {
-      selectedType.value = 'app';
-      selectedId.value = app.id;
-      selectedApp.value = app;
-      selectedDb.value = null;
-      selectedTable.value = null;
-      selectedField.value = null;
-    };
-    
-    const selectDb = (db) => {
-      selectedType.value = 'db';
-      selectedId.value = db.id;
-      selectedDb.value = db;
-      selectedTable.value = null;
-      selectedField.value = null;
-    };
-    
-    const selectTable = async (table) => {
-      selectedType.value = 'table';
-      selectedId.value = table.id;
-      selectedTable.value = table;
-      selectedField.value = null;
-      await nextTick();
-      renderLineageGraph();
-    };
-    
-    const selectField = (field) => {
-      selectedType.value = 'field';
-      selectedId.value = field.id;
-      selectedField.value = field;
-    };
-    
-    const getGaugeColor = (val) => {
-      if (val < 60) return '#67c23a';
-      if (val < 80) return '#e6a23c';
-      return '#f56c6c';
-    };
-    
-    const getStatusType = (status) => {
-      const map = { online: 'success', warning: 'warning', error: 'danger' };
-      return map[status] || 'info';
-    };
-    
-    const handleSearch = () => {
-      // 搜索高亮
-    };
-    
-    // 血缘图渲染
-    const renderLineageGraph = () => {
-      if (!mockData || !selectedTable.value || !document.getElementById('lineage-graph')) return;
-      
-      const container = document.getElementById('lineage-graph');
-      if (graph) { graph.destroy(); graph = null; }
-      
-      // 构建节点
-      const nodes = [];
-      const edges = [];
-      const centerTable = selectedTable.value;
-      
-      // 中心节点
-      nodes.push({
-        id: centerTable.id,
-        label: centerTable.name,
-        type: 'circle',
-        size: 60,
-        style: { fill: '#409eff', stroke: '#337ecc', lineWidth: 2 },
-        labelCfg: { style: { fill: '#fff', fontSize: 12 } }
-      });
-      
-      // 获取上下游血缘
-      let relatedTables = [];
-      if (lineageView.value === 'in') {
-        mockData.tableLineage.filter(l => l.toTableId === centerTable.id).forEach(l => {
-          const t = mockData.tables.find(t => t.id === l.fromTableId);
-          if (t) relatedTables.push({ table: t, lineage: l, direction: 'in' });
+    function renderGraph(){
+      if(!data.value||!curTbl.value||!window.G6)return;
+      const container=document.getElementById('g6graph');
+      if(!container)return;
+      if(graphRef.value){graphRef.value.destroy();graphRef.value=null;}
+      const center=curTbl.value;
+      const nodes=[{
+        id:center.id,label:center.name,type:'circle',size:60,
+        style:{fill:'#409eff',stroke:'#337ecc',lineWidth:2},
+        labelCfg:{style:{fill:'#fff',fontSize:12}}
+      }];
+      const edges=[];
+      const related=[];
+      if(lineView.value==='in'){
+        data.value.tableLineage.filter(l=>l.toTableId===center.id).forEach(l=>{
+          const t=data.value.tables.find(t=>t.id===l.fromTableId);
+          if(t)related.push({t,rel:l,d:'in'});
         });
-      } else {
-        mockData.tableLineage.filter(l => l.fromTableId === centerTable.id).forEach(l => {
-          const t = mockData.tables.find(t => t.id === l.toTableId);
-          if (t) relatedTables.push({ table: t, lineage: l, direction: 'out' });
+      }else{
+        data.value.tableLineage.filter(l=>l.fromTableId===center.id).forEach(l=>{
+          const t=data.value.tables.find(t=>t.id===l.toTableId);
+          if(t)related.push({t,rel:l,d:'out'});
         });
       }
-      
-      // 添加相关节点
-      relatedTables.forEach((item, idx) => {
-        const angle = (lineageView.value === 'in' ? -Math.PI/2 : Math.PI/2) + (idx - (relatedTables.length-1)/2) * 0.8;
-        const r = 160;
+      related.forEach((item,idx)=>{
+        const angle=(lineView.value==='in'?-Math.PI/2:Math.PI/2)+(idx-(related.length-1)/2)*0.8;
+        const r=160;
         nodes.push({
-          id: item.table.id,
-          label: item.table.name,
-          type: 'circle',
-          size: 50,
-          style: { fill: item.table.status === 'error' ? '#f56c6c' : item.table.status === 'warning' ? '#e6a23c' : '#909399', stroke: '#666', lineWidth: 1 },
-          labelCfg: { style: { fill: '#fff', fontSize: 11 } },
-          x: 250 + r * Math.cos(angle),
-          y: 250 + r * Math.sin(angle)
+          id:item.t.id,label:item.t.name,type:'circle',size:50,
+          style:{fill:item.t.status==='error'?'#f56c6c':item.t.status==='warning'?'#e6a23c':'#909399',stroke:'#666'},
+          labelCfg:{style:{fill:'#fff',fontSize:11}},
+          x:250+r*Math.cos(angle),y:250+r*Math.sin(angle)
         });
-        
         edges.push({
-          source: lineageView.value === 'in' ? item.table.id : centerTable.id,
-          target: lineageView.value === 'in' ? centerTable.id : item.table.id,
-          label: item.lineage.relationship,
-          style: { endArrow: { path: G6.Arrow.triangle(6, 8, 0), fill: '#c0c4cc' } }
+          source:lineView.value==='in'?item.t.id:center.id,
+          target:lineView.value==='in'?center.id:item.t.id,
+          label:item.rel.relationship,
+          style:{endArrow:{path:G6.Arrow.triangle(6,8,0),fill:'#c0c4cc'}}
         });
       });
-      
-      // 初始化图
-      graph = new G6.Graph({
-        container: 'lineage-graph',
-        width: container.offsetWidth,
-        height: 500,
-        fitView: true,
-        animate: true,
-        defaultNode: { type: 'circle' },
-        defaultEdge: { type: 'polyline', style: { stroke: '#c0c4cc', lineWidth: 2 } },
-        modes: { default: ['drag-canvas', 'zoom-canvas', 'drag-node'] }
+      const graph=new G6.Graph({
+        container:'g6graph',width:container.offsetWidth||800,height:500,
+        fitView:true,animate:true,
+        defaultNode:{type:'circle'},
+        defaultEdge:{type:'polyline',style:{stroke:'#c0c4cc',lineWidth:2}},
+        modes:{default:['drag-canvas','zoom-canvas','drag-node']}
       });
-      
-      graph.data({ nodes, edges });
+      graph.data({nodes,edges});
       graph.render();
-      
-      // 点击节点
-      graph.on('node:click', (e) => {
-        const nodeId = e.item.getModel().id;
-        const table = mockData.tables.find(t => t.id === nodeId);
-        if (table) selectTable(table);
+      graphRef.value=graph;
+      graph.on('node:click',e=>{
+        const id=e.item.getModel().id;
+        const tbl=data.value.tables.find(t=>t.id===id);
+        if(tbl)selectTbl(tbl);
       });
-    };
+    }
     
-    // 监听血缘视图切换
-    watch(lineageView, () => {
-      if (selectedType.value === 'table') renderLineageGraph();
-    });
+    watch(lineView,()=>{if(selType.value==='tbl')renderGraph();});
     
-    return {
-      searchKeyword, levelFilter, selectedType, selectedId,
-      selectedServer, selectedApp, selectedDb, selectedTable, selectedField,
-      lineageView,
-      filteredServers, currentApps, currentDbs, currentTables, currentFields,
-      errorTablesCount, fieldUpstream, fieldDownstream,
-      selectServer, selectApp, selectDb, selectTable, selectField,
-      getGaugeColor, getStatusType, handleSearch
-    };
+    return{search,selType,selId,curSrv,curApp,curDb,curTbl,curFld,
+      servers,errTables,lineView,upStreams,downStreams,
+      getApps,getDbs,getTables,getFields,fmtNum,statusType,gaugeColor,doSearch,
+      selectSrv,selectApp,selectDb,selectTbl,selectFld};
   }
 });
-
-app.use(PiniaVuePlugin);
-app.use(store);
+app.use(ElementPlus);
 app.mount('#app');
-
-// 加载数据
-loadData().then(() => {
-  console.log('数据加载完成');
-});
+fetch('./data/mock-data.json').then(r=>r.json()).then(d=>data.value=d);
 </script>
 </body>
 </html>
